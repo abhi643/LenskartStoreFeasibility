@@ -1,0 +1,26 @@
+Connaught Place, Block A, New Delhi, Delhi 110001
+DLF Cyber City, Sector 25, Gurgaon, Haryana 122002
+Sector 18 Market, Noida, Uttar Pradesh 201301
+Linking Road, Bandra West, Mumbai, Maharashtra 400050
+Phoenix Mills Compound, Lower Parel, Mumbai, Maharashtra 400013
+High Street Phoenix, Senapati Bapat Marg, Lower Parel, Mumbai, Maharashtra 400013
+Commercial Street, Shivaji Nagar, Bangalore, Karnataka 560001
+Brigade Road, Ashok Nagar, Bangalore, Karnataka 560001
+UB City Mall, Vittal Mallya Road, Bangalore, Karnataka 560001
+Express Avenue Mall, Royapettah, Chennai, Tamil Nadu 600014
+Ranganathan Street, T. Nagar, Chennai, Tamil Nadu 600017
+Road No. 1, Banjara Hills, Hyderabad, Telangana 500034
+HITEC City, Madhapur, Hyderabad, Telangana 500081
+Fergusson College Road, Pune, Maharashtra 411004
+North Main Road, Koregaon Park, Pune, Maharashtra 411001
+Select City Walk, Saket, New Delhi, Delhi 110017
+Ambience Mall, DLF Phase 3, Gurgaon, Haryana 122002
+Forum Mall, Hosur Road, Koramangala, Bangalore, Karnataka 560095
+Rajiv Chowk Metro Station, Connaught Place, New Delhi, Delhi 110001
+Andheri East Metro Station, Mumbai, Maharashtra 400069
+MG Road Metro Station, Bangalore, Karnataka 560001
+Kokilaben Dhirubhai Ambani Hospital, Four Bungalows, Andheri West, Mumbai, Maharashtra 400053
+All India Institute of Medical Sciences, Ansari Nagar, New Delhi, Delhi 110029
+Jiwaji University, Gwalior, Madhya Pradesh 474011
+City Centre Mall, Maharani Laxmi Bai Marg, Gwalior, Madhya Pradesh 474011
+26.200787, 78.173393

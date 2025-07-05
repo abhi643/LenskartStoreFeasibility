@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Feasibility Predictor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .location-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .location-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .location-toggle {
+            display: flex;
+            background: #e9ecef;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .location-toggle button {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .location-toggle button.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading i {
+            font-size: 2em;
+            color: #667eea;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .result.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .result.error {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        .result h3 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .score-display {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 15px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-interpretation {
+            font-size: 1.1em;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-store"></i> Store Feasibility Predictor</h1>
+            <p>Predict the feasibility of your retail location using AI</p>
+        </div>
+
+        <form id="feasibilityForm">
+            <div class="location-section">
+                <h3><i class="fas fa-map-marker-alt"></i> Location Information</h3>
+                
+                <div class="location-toggle">
+                    <button type="button" id="addressToggle" class="active">Address</button>
+                    <button type="button" id="coordsToggle">Coordinates</button>
+                </div>
+
+                <div id="addressSection">
+                    <div class="form-group">
+                        <label for="address">
+                            <i class="fas fa-home"></i> Address
+                        </label>
+                        <textarea id="address" name="address" rows="3" placeholder="Enter the complete address of the proposed location"></textarea>
+                    </div>
+                </div>
+
+                <div id="coordsSection" class="hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lat">
+                                <i class="fas fa-globe"></i> Latitude
+                            </label>
+                            <input type="number" id="lat" name="lat" step="any" placeholder="e.g., 28.6139">
+                        </div>
+                        <div class="form-group">
+                            <label for="lon">
+                                <i class="fas fa-globe"></i> Longitude
+                            </label>
+                            <input type="number" id="lon" name="lon" step="any" placeholder="e.g., 77.2090">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="property_type">
+                        <i class="fas fa-building"></i> Property Type
+                    </label>
+                    <select id="property_type" name="property_type">
+                        <option value="commercial">Commercial</option>
+                        <option value="retail">Retail</option>
+                        <option value="mixed">Mixed Use</option>
+                        <option value="residential">Residential</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="floor_level">
+                        <i class="fas fa-layer-group"></i> Floor Level
+                    </label>
+                    <select id="floor_level" name="floor_level">
+                        <option value="Ground">Ground Floor</option>
+                        <option value="First">First Floor</option>
+                        <option value="Second">Second Floor</option>
+                        <option value="Third">Third Floor</option>
+                        <option value="Higher">Higher Floor</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="site_area_sqft">
+                        <i class="fas fa-expand-arrows-alt"></i> Site Area (sq ft)
+                    </label>
+                    <input type="number" id="site_area_sqft" name="site_area_sqft" value="1200" min="100" step="50">
+                </div>
+                <div class="form-group">
+                    <label for="asking_rent_per_sqft_inr">
+                        <i class="fas fa-rupee-sign"></i> Rent per sq ft (INR)
+                    </label>
+                    <input type="number" id="asking_rent_per_sqft_inr" name="asking_rent_per_sqft_inr" value="45" min="1" step="1">
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-chart-line"></i> Predict Feasibility
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner"></i>
+            <p>Analyzing location feasibility...</p>
+        </div>
+
+        <div class="result" id="result">
+            <h3 id="resultTitle"></h3>
+            <div class="score-display" id="scoreDisplay"></div>
+            <div class="score-interpretation" id="scoreInterpretation"></div>
+        </div>
+    </div>
+
+    <script>
+        // Location toggle functionality
+        const addressToggle = document.getElementById('addressToggle');
+        const coordsToggle = document.getElementById('coordsToggle');
+        const addressSection = document.getElementById('addressSection');
+        const coordsSection = document.getElementById('coordsSection');
+
+        addressToggle.addEventListener('click', () => {
+            addressToggle.classList.add('active');
+            coordsToggle.classList.remove('active');
+            addressSection.classList.remove('hidden');
+            coordsSection.classList.add('hidden');
+        });
+
+        coordsToggle.addEventListener('click', () => {
+            coordsToggle.classList.add('active');
+            addressToggle.classList.remove('active');
+            coordsSection.classList.remove('hidden');
+            addressSection.classList.add('hidden');
+        });
+
+        // Form submission
+        document.getElementById('feasibilityForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            
+            // Disable submit button
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            
+            try {
+                // Prepare the request data
+                const requestData = {
+                    property_type: data.property_type,
+                    site_area_sqft: parseInt(data.site_area_sqft),
+                    asking_rent_per_sqft_inr: parseInt(data.asking_rent_per_sqft_inr),
+                    floor_level: data.floor_level
+                };
+                
+                // Add location data based on selected input method
+                if (addressToggle.classList.contains('active')) {
+                    requestData.address = data.address;
+                } else {
+                    requestData.lat = parseFloat(data.lat);
+                    requestData.lon = parseFloat(data.lon);
+                }
+                
+                // Make API call
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const result = await response.json();
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                // Show result
+                const resultDiv = document.getElementById('result');
+                const resultTitle = document.getElementById('resultTitle');
+                const scoreDisplay = document.getElementById('scoreDisplay');
+                const scoreInterpretation = document.getElementById('scoreInterpretation');
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultTitle.textContent = 'Feasibility Analysis Complete';
+                    scoreDisplay.textContent = result.feasibility_score.toFixed(3); // Show score like 0.678
+                                
+                    // Interpret score in 0-1 scale
+                    const score = result.feasibility_score;
+                    if (score >= 0.8) {
+                        scoreInterpretation.textContent = 'Excellent location! Highly recommended for store setup.';
+                    } else if (score >= 0.6) {
+                        scoreInterpretation.textContent = 'Good location with strong potential for success.';
+                    } else if (score >= 0.4) {
+                        scoreInterpretation.textContent = 'Moderate feasibility. Consider location factors carefully.';
+                    } else {
+                        scoreInterpretation.textContent = 'Low feasibility. This location may pose challenges.';
+                    }
+                } else {
+                    resultDiv.className = 'result error';
+                    resultTitle.textContent = 'Analysis Failed';
+                    scoreDisplay.textContent = '❌';
+                    scoreInterpretation.textContent = result.error || 'An error occurred during analysis.';
+                }
+                
+                resultDiv.style.display = 'block';
+                
+            } catch (error) {
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                // Show error
+                const resultDiv = document.getElementById('result');
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                
+                document.getElementById('resultTitle').textContent = 'Connection Error';
+                document.getElementById('scoreDisplay').textContent = '⚠️';
+                document.getElementById('scoreInterpretation').textContent = 'Unable to connect to the prediction service. Please try again later.';
+            }
+            
+            // Re-enable submit button
+            submitBtn.disabled = false;
+        });
+
+        // Auto-detect user location (optional)
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('lat').value = position.coords.latitude.toFixed(6);
+                    document.getElementById('lon').value = position.coords.longitude.toFixed(6);
+                },
+                (error) => {
+                    // Silently handle geolocation errors - not critical for functionality
+                },
+                { enableHighAccuracy: true, timeout: 5000, maximumAge: 300000 }
+            );
+        }
+    </script>
+</body>
+</html>
