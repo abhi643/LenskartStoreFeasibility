@@ -1,0 +1,37 @@
+{
+  "numerical": [
+    "latitude",
+    "longitude",
+    "num_optical_stores_within_1km",
+    "num_eye_clinics_within_1km",
+    "distance_to_nearest_optical_store_km",
+    "distance_to_nearest_mall_km",
+    "distance_to_public_transport_km",
+    "num_retail_shops_within_1km",
+    "num_restaurants_within_1km",
+    "estimated_daily_foot_traffic",
+    "vehicular_traffic_count"
+  ],
+  "categorical": [
+    "city",
+    "state",
+    "locality_type"
+  ],
+  "all_features_order": [
+    "latitude",
+    "longitude",
+    "city",
+    "state",
+    "locality_type",
+    "num_optical_stores_within_1km",
+    "num_eye_clinics_within_1km",
+    "distance_to_nearest_optical_store_km",
+    "distance_to_nearest_mall_km",
+    "distance_to_public_transport_km",
+    "num_retail_shops_within_1km",
+    "num_restaurants_within_1km",
+    "estimated_daily_foot_traffic",
+    "vehicular_traffic_count"
+  ],
+  "target": "feasibility_score"
+}

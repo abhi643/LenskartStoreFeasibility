@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 import pandas as pd
 import logging
 import joblib
+import os
+import subprocess  # Import the subprocess module
 from lenskart_site_pipeline_with_ml import lenskart_site_pipeline_with_feasibility
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -12,17 +14,35 @@ app = Flask(__name__)
 from flask_cors import CORS
 CORS(app)
 
-# Load the model at startup
+# --- REVISED MODEL LOADING LOGIC ---
 model_file = 'feasibility_model.joblib'
-try:
-    model = joblib.load(model_file)
-    logger.info(f"Model loaded successfully from {model_file}")
-except Exception as e:
-    logger.error(f"Failed to load model: {e}. Please ensure the model file exists and is compatible.")
-    model = None
+model = None
+
+# Check if the model file exists
+if os.path.exists(model_file):
+    logger.info(f"Found existing model. Loading from {model_file}")
+    try:
+        model = joblib.load(model_file)
+        logger.info("Model loaded successfully.")
+    except Exception as e:
+        logger.error(f"Error loading existing model file: {e}")
+else:
+    # If the model file does not exist, run the training script
+    logger.warning(f"Model file not found. Training a new model by running train_feasibility_model.py...")
+    try:
+        # We run the script as a separate process to ensure a clean run
+        subprocess.run(["python", "train_feasibility_model.py"], check=True)
+        logger.info("Training script finished. Reloading the newly created model.")
+        model = joblib.load(model_file)
+        logger.info("Newly trained model loaded successfully.")
+    except Exception as e:
+        logger.error(f"Failed to train or load a new model: {e}")
+
+# --- END OF REVISED LOGIC ---
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    # This part of your code can remain exactly the same
     try:
         data = request.get_json()
         if not data:
